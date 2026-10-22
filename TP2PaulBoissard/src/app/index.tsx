@@ -1,19 +1,40 @@
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Pressable, Image } from "react-native";
 
+export type Participation = {
+  numeroMagique: string
+}
+
 export default function Index() {
+  const [numero, setNumero] = useState(0)
+  const routeur = useRouter()
 
+  function compteur() {
+    setNumero(numero + 1)  
+  }
 
+  function navigate() {
+    const objParticipation: Participation = {
+      numeroMagique: numero.toString()
+    }
+
+    routeur.push({ pathname: "/richesse", params: objParticipation })
+  }
+
+  console.log(numero)
   return (
     <View style={styles.container}>
       <Text style={styles.texte}>Devine le nombre magique</Text>
-      <Pressable style={styles.Pressable}>
+      <Pressable style={styles.Pressable} onPress={compteur}>
         <Image
           style={styles.image}
           resizeMode="contain"
           source={require('@/assets/images/cegep.png')} />
       </Pressable>
       <TouchableOpacity
-        style={styles.bouton}>
+        style={styles.bouton}
+        onPress={navigate}>
         <Text style={styles.texte}>Participer</Text>
       </TouchableOpacity>
     </View>
