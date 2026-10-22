@@ -1,9 +1,9 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+      <Text style={styles.texte}>Devine le nombre magique</Text>
     </View>
   );
 }
@@ -13,5 +13,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#00966C"
   },
+  texte:{
+    color: "#FFFFFF"
+  },
+  bouton:{
+    backgroundColor: "#474C55"
+  }
 });
