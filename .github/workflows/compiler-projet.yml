@@ -1,0 +1,40 @@
+name: Compiler projet
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["🤖 Dependabot Auto-Merge"]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Compiler projet
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Build Backend
+        run: |
+          cd backend
+          npm ci --ignore-scripts
+          npm run build
+          cp package.json package-lock.json dist/
+      - name: Installer Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Build Frontend
+        run: |
+          if [ -d "frontend" ]; then
+          echo "Dossier frontend détecté. Lancement du build..."
+            cd frontend
+            bun install --frozen-lockfile
+            bun run build
+          else
+            echo "Aucun dossier frontend détecté. Étape ignorée."
+          fi

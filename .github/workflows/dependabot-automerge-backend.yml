@@ -1,0 +1,53 @@
+name: 🤖 Dependabot Auto-Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build-and-test:
+    name: 🏗️ Build & Verify
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: 🚚 Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: 🔍 Check changed files
+        id: filter
+        uses: dorny/paths-filter@v4.0.3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+
+      - name: � Cache NPM dependencies
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: 📦 Build Backend
+        if: steps.filter.outputs.backend == 'true'
+        run: |
+          cd backend
+          npm ci --ignore-scripts
+          npm run build
+
+      - name: 🗳️ Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: 🔀 Merge Backend PRs
+        run: gh pr merge --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

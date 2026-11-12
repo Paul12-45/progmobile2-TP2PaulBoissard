@@ -1,0 +1,60 @@
+version: 2
+updates:
+  # Configuration pour le Backend
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 5
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 7
+    groups:
+      minor-and-patch: # Regroupe les mises à jour mineures en une seule PR
+        update-types:
+          - "minor"
+          - "patch"
+      major: # Regroupe les mises à jour majeures en une seule PR
+        update-types:
+          - "major"
+
+  # Configuration pour le Frontend Mobile
+  - package-ecosystem: "bun"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 5
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 7
+    # Ici, on ignore ce qui est trop lié au SDK Expo ou à la config TS
+    ignore:
+      - dependency-name: "expo*"
+      - dependency-name: "@expo/*"
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "react-native*"
+      - dependency-name: "typescript"
+      - dependency-name: "@types/react"
+    groups:
+      minor-and-patch: # Regroupe les mises à jour mineures en une seule PR
+        update-types:
+          - "minor"
+          - "patch"
+      major: # Regroupe les mises à jour majeures en une seule PR
+        update-types:
+          - "major"
+
+  # Configuration pour les GitHub Actions (Workflows)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*" # Regroupe les mises à jour d'actions en une seule PR
